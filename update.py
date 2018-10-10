@@ -126,7 +126,6 @@ def update_entry(entry, name, start_time, end_time):
 
     # Submit
     send_return("button.Button__success___3mVd2")
-    time.sleep(1)
 
 def add_entry(name, start_time, end_time, project, planned=True):
     start_time = strip_and_datetime(start_time)

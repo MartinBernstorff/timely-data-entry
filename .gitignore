@@ -1,7 +1,8 @@
 # Created by https://www.gitignore.io/api/python
 
 ### Credentials ###
-credentials.py
+*credentials*
+*token*
 
 ### Python ###
 # Byte-compiled / optimized / DLL files

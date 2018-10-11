@@ -17,6 +17,9 @@ from oauth2client import file, client, tools
 # Import credentials
 from credentials import email, password
 
+# Get task_dicts
+from task_dicts import task_project_pairs, event_exclude
+
 #Generate tomorrow-string
 index = dt.today() + datetime.timedelta(1) #<--- Beware the time-delta!
 index_midnight = index.replace(hour=0, minute=1)
@@ -190,49 +193,6 @@ def add_entry(name, start_time, end_time, project, planned=True):
 
     # Submit
     send_return("button.Button__success___3mVd2")
-
-task_project_pairs = {
-    "Wake up + shower": "Morn",
-    "Meditate + breakfast": "Morn",
-    "Undervisermøde": "Epidemiologi",
-    "Morgen-konf.": "Psychiatry-clinic",
-    "Mid-day meditation": "Rest",
-    "Købe ind": "Food",
-    "Dinner": "Food",
-    "Lunch": "Food",
-    "Review & plan": "Daily review",
-    "Træne": "Workout",
-    "Weekly planning": "Weekly review",
-    "Day One: Weekly meditation": "Weekly review",
-    "Forberede mig til næste epi-undervisning": "Epi",
-    "Sleep": "Sleep",
-    "M ❤️'": "Mieke",
-    "Game 💪": "Mads",
-    "Afdelingsarbejde": "Psychiatry-clinic",
-    "Misc. routine": "Misc. routine",
-    "Pakke ud": "Miscel",
-    "Anki #All": "Pensum",
-    "Undervisning": "Psychiatry-clinic",
-    "Shave": "Mainten",
-    "Far og Martin – Snak": "Famil",
-    "Mor og Martin – Snak": "Famil",
-    "Empty out inbox": "Empty out inbox",
-    "Journal Club": "Psychiatry-clinic",
-    "Middags-konf": "Psychiatry-clinic",
-    "R&P: Data-entry": "Daily review",
-    "Empty inbox": "Empty out inbox",
-    "Undervisning": "Psychiatry-clinic",
-    "Good-night routine": "Good-night routine",
-    "Nap": "Restoration"
-}
-
-event_exclude = {
-    "🌛",
-    "Transport",
-    "M ❤️",
-    "Travel",
-    "Aarhus H -> Herning st."
-}
 
 ######################
 # Let's start entry! #

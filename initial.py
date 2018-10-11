@@ -1,24 +1,14 @@
-# Selenium imports
-from selenium.webdriver import Firefox
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-
 # Other imports
-from time import sleep
 import time
 import datetime
 from datetime import datetime as dt
-from googleapiclient.discovery import build
-from httplib2 import Http
-from oauth2client import file, client, tools
-
-# Import credentials
-from credentials import email, password
 
 # Get task_dicts
-from task_dicts import task_project_pairs, event_exclude, task_tags, calendar_exclude
+from task_dicts import task_project_pairs, event_exclude, task_tags
+
+# Import helper functions
+from common import *
+import gcal
 
 #Generate tomorrow-string
 index = dt.today() + datetime.timedelta(1) #<--- Beware the time-delta!
@@ -30,197 +20,20 @@ day_after_index = index + datetime.timedelta(1)
 day_after_index_midnight = day_after_index.replace(hour=0, minute=1)
 day_after_index_formatted = day_after_index_midnight.isoformat() + 'Z'
 
-########################
-# Baseline established #
-########################
-# Get calendar events
-# If modifying these scopes, delete the file token.json.
-SCOPES = 'https://www.googleapis.com/auth/calendar.readonly'
-
-event_list=[]
-
-"""Shows basic usage of the Google Calendar API.
-Prints the start and name of the next 10 events on the user's calendar.
-"""
-store = file.Storage('token.json')
-creds = store.get()
-if not creds or creds.invalid:
-    flow = client.flow_from_clientsecrets('credentials.json', SCOPES)
-    creds = tools.run_flow(flow, store)
-service = build('calendar', 'v3', http=creds.authorize(Http()))
-
-# Call the Calendar API
-
-# Get all calendars
-calendar_list = service.calendarList().list().execute()
-
-for calendar_list_entry in calendar_list['items']:
-    if calendar_list_entry["summary"] in calendar_exclude:
-        continue
-    else:
-        events_result = service.events().list(calendarId=calendar_list_entry["id"],
-                                                timeMin=index_formatted,
-                                                timeMax=day_after_index_formatted,
-                                                singleEvents=True,
-                                                orderBy='startTime').execute()
-        events = events_result.get('items', [])
-
-        for event in events:
-            if "dateTime" in event['start'] and "dateTime" in event['end']:
-                event_list.append([event['summary'],
-                                   event['start']['dateTime'],
-                                   event['end']['dateTime']
-                                   ])
-
-event_list.sort(key=lambda x: x[1])
-
-###########################
-# Init browser and log in #
-###########################
-b = Firefox()
-b.get('https://app.timelyapp.com/836406/calendar/day?date={}'.format(index_str))
-
-# Login
-elem = b.find_element_by_id("user_email")
-elem.send_keys(email)
-
-elem = b.find_element_by_id("user_password")
-elem.send_keys(password)
-elem.send_keys(Keys.RETURN)
-
-# Wait for page loaded
-try:
-    element = WebDriverWait(b, 90).until(
-        EC.presence_of_element_located((By.CLASS_NAME, "WorkHistoryEntry__timelineIcon___18ugC"))
-    )
-finally:
-    print("Page loaded!")
-
-####################
-# Helper functions #
-####################
-def fill_field(selector, value):
-    wait_for_element(selector)
-    el = b.find_element_by_css_selector(selector)
-    el.clear()
-    el.send_keys(value)
-
-def get_field_value(selector):
-    wait_for_element(selector)
-    el = b.find_element_by_css_selector(selector)
-    value = el.get_attribute("value")
-    print(value)
-    return value
-
-def click_element(selector):
-    wait_for_element(selector)
-    el = b.find_element_by_css_selector(selector)
-    el.click()
-
-def send_return(selector):
-    wait_for_element(selector)
-    el = b.find_element_by_css_selector(selector)
-    el.send_keys(Keys.RETURN)
-
-def strip_and_datetime(time_string):
-    stripped = str(time_string)[:19]
-    return dt.strptime(stripped, "%Y-%m-%dT%H:%M:%S")
-
-def wait_for_element(selector):
-    try:
-        element = WebDriverWait(b, 90).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, selector))
-        )
-    finally:
-        pass
-
-def add_entry(name, start_time, end_time, project=None, tags=None, planned=True):
-    '''
-    Adds a new entry. Takes the following:
-        Name: Entry name (str)
-        Start_time: Entry start_time (Gcal format)
-        End_time: See above
-        Project: Entry project (str)
-        Planned: Whether pre-planned (bool)
-    '''
-    start_time = strip_and_datetime(start_time)
-    end_time = strip_and_datetime(end_time)
-
-    # Convert to unix
-    start_time_ts = time.mktime(start_time.timetuple())
-    end_time_ts = time.mktime(end_time.timetuple())
-
-    # Calculate time in hours and minutes
-    hours = int(end_time_ts-start_time_ts) // 3600
-    minutes = int(end_time_ts-start_time_ts) // 60 % 60
-
-    ############
-    # Starting #
-    ############
-
-    add_entry_selector = "EventAddButton__container___1rzOq"
-
-    print("Adding {}".format(name))
-    click_element(".{}".format(add_entry_selector))
-
-    # Set entry start- and end-time
-    click_element("span.fa-arrows-h")
-
-    start_time_fmt = start_time.strftime("%H:%M")
-    end_time_fmt = end_time.strftime("%H:%M")
-
-    fill_field("input[name='from']", start_time_fmt)
-    fill_field("input[name='to']", end_time_fmt)
-
-    if name == "Sleep":
-        fill_field("input[name='hours']", hours)
-        fill_field("input[name='minutes']", minutes)
-
-    fill_field("textarea#tag-input", name)
-
-    # Set planned time
-    if planned is not False:
-        click_element("div[data-hint='Set planned time']")
-
-        fill_field("input[name='estimated_hours']", hours)
-        fill_field("input[name='estimated_minutes']", minutes)
-
-    # Set project
-    if project is not None:
-        el = b.find_element_by_css_selector("div.Select-value-label")
-        el.click()
-        el = b.find_element_by_css_selector("input[role='combobox']")
-        el.send_keys(project)
-        el.send_keys(Keys.RETURN)
-    else:
-        el = b.find_element_by_css_selector("div.Select-value-label")
-        el.click()
-        el = b.find_element_by_css_selector("input[role='combobox']")
-        el.send_keys("Uncategorized")
-        el.send_keys(Keys.RETURN)
-
-    # Add tags
-    if tags is not None:
-        print("Adding tags!")
-        click_element(".TagDropdown__noTags___M2_Fp")
-        for tag in tags:
-            print("    Adding {}".format(tag))
-            fill_field(".Input__container___32lm1", tag)
-            fill_field(".Input__container___32lm1", tag) # Bug in Timely, re-fill
-            send_return(".Input__container___32lm1")
-
-    # Submit
-    send_return("button.Button__success___3mVd2")
-
 ######################
 # Let's start entry! #
 ######################
-try:
-    element = WebDriverWait(b, 90).until(
-        EC.presence_of_element_located((By.CLASS_NAME, "WorkHistoryEntry__timelineIcon___18ugC"))
-    )
-finally:
-    print("Page loaded!")
+# Init browser
+init(index_str)
+from common import b
+
+# Setup gcal
+gcal.init(index_formatted, day_after_index_formatted)
+from gcal import event_list
+
+###############
+# Add entries #
+###############
 
 i = 1
 

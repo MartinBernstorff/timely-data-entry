@@ -208,7 +208,6 @@ def add_entry(name, start_time, end_time, project=None, tags=None, planned=True)
             fill_field(".Input__container___32lm1", tag)
             fill_field(".Input__container___32lm1", tag) # Bug in Timely, re-fill
             send_return(".Input__container___32lm1")
-            time.sleep(3)
 
     # Submit
     send_return("button.Button__success___3mVd2")
@@ -224,6 +223,8 @@ finally:
     print("Page loaded!")
 
 i = 1
+
+no_project_txt = open("no_project/{}.txt".format(index_str), "w")
 
 for event in event_list: # Skip ith event, avoid sleep from day before
     if i == 1:
@@ -244,7 +245,10 @@ for event in event_list: # Skip ith event, avoid sleep from day before
             if event[0] in task_tags:
                 add_entry(name=event[0], start_time=event[1], end_time=event[2],
                             tags=task_tags[event[0]])
+                no_project_txt.write(str(event[0]))
             else:
                 add_entry(name=event[0], start_time=event[1], end_time=event[2])
+                no_project_txt.write(str(event[0]))
 
 b.quit()
+no_project_txt.close()

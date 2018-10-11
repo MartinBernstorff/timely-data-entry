@@ -19,7 +19,7 @@ from oauth2client import file, client, tools
 from credentials import email, password
 
 # Get task_dicts
-from task_dicts import task_project_pairs, event_exclude, task_tags
+from task_dicts import task_project_pairs, event_exclude, task_tags, calendar_exclude
 
 #Generate tomorrow-string
 index = dt.today() + datetime.timedelta(int(sys.argv[1])) #<--- Beware the time-delta!
@@ -232,7 +232,7 @@ service = build('calendar', 'v3', http=creds.authorize(Http()))
 calendar_list = service.calendarList().list().execute()
 
 for calendar_list_entry in calendar_list['items']:
-    if calendar_list_entry["summary"] == "E18_04semHold15":
+    if calendar_list_entry["summary"] in calendar_exclude:
         continue
     else:
         events_result = service.events().list(calendarId=calendar_list_entry["id"],

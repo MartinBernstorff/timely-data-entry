@@ -38,3 +38,8 @@ event_exclude = {
 task_tags = {
     "Wake up + shower": ["+2", "Dad"]
 }
+
+calendar_exclude = {
+    "Facebook Events",
+    "E18_04semHold15"
+} # Remember to use gcal_isolated to get calendar list names

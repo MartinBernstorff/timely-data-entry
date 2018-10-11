@@ -42,24 +42,4 @@ service = build('calendar', 'v3', http=creds.authorize(Http()))
 calendar_list = service.calendarList().list().execute()
 
 for calendar_list_entry in calendar_list['items']:
-    if calendar_list_entry["summary"] == "E18_04semHold15":
-        continue
-    else:
-        events_result = service.events().list(calendarId=calendar_list_entry["id"],
-                                                timeMin=index_formatted,
-                                                timeMax=day_after_index_formatted,
-                                                singleEvents=True,
-                                                orderBy='startTime').execute()
-        events = events_result.get('items', [])
-
-        for event in events:
-            if "dateTime" in event['start'] and "dateTime" in event['end']:
-                event_list.append([event['summary'],
-                                   event['start']['dateTime'],
-                                   event['end']['dateTime']
-                                   ])
-
-event_list.sort(key=lambda x: x[1])
-
-for item in event_list:
-    print(item[0])
+    print("{}".format(calendar_list_entry["summary"].encode("utf-8")))

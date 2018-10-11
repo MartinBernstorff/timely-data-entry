@@ -19,7 +19,7 @@ from oauth2client import file, client, tools
 from credentials import email, password
 
 # Get task_dicts
-from task_dicts import task_project_pairs, event_exclude
+from task_dicts import task_project_pairs, event_exclude, task_tags
 
 #Generate tomorrow-string
 index = dt.today() + datetime.timedelta(int(sys.argv[1])) #<--- Beware the time-delta!
@@ -130,7 +130,15 @@ def update_entry(entry, name, start_time, end_time):
     # Submit
     send_return("button.Button__success___3mVd2")
 
-def add_entry(name, start_time, end_time, project, planned=True):
+def add_entry(name, start_time, end_time, project=None, tags=None, planned=True):
+    '''
+    Adds a new entry. Takes the following:
+        Name: Entry name (str)
+        Start_time: Entry start_time (Gcal format)
+        End_time: See above
+        Project: Entry project (str)
+        Planned: Whether pre-planned (bool)
+    '''
     start_time = strip_and_datetime(start_time)
     end_time = strip_and_datetime(end_time)
 
@@ -186,6 +194,17 @@ def add_entry(name, start_time, end_time, project, planned=True):
         el = b.find_element_by_css_selector("input[role='combobox']")
         el.send_keys("Uncategorized")
         el.send_keys(Keys.RETURN)
+
+    # Add tags
+    if tags is not None:
+        print("Adding tags!")
+        click_element(".TagDropdown__noTags___M2_Fp")
+        for tag in tags:
+            print("    Adding {}".format(tag))
+            fill_field(".Input__container___32lm1", tag)
+            fill_field(".Input__container___32lm1", tag) # Bug in Timely, re-fill
+            send_return(".Input__container___32lm1")
+            time.sleep(3)
 
     # Submit
     send_return("button.Button__success___3mVd2")

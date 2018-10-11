@@ -189,7 +189,6 @@ def add_entry(name, start_time, end_time, project, planned=True):
 
     # Submit
     send_return("button.Button__success___3mVd2")
-    time.sleep(1)
 
 ########################
 # Baseline established #

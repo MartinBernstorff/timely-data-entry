@@ -178,10 +178,9 @@ def add_entry(name, start_time, end_time, project=None, tags=None, planned=True)
 
     # Add tags
     if tags is not None:
-        print("Adding tags!")
         click_element(".TagDropdown__noTags___M2_Fp")
         for tag in tags:
-            print("    Adding {}".format(tag))
+            print("    Adding {} tag".format(tag))
             fill_field(".Input__container___32lm1", tag)
             fill_field(".Input__container___32lm1", tag) # Bug in Timely, re-fill
             send_return(".Input__container___32lm1")

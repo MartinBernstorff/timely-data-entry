@@ -34,3 +34,7 @@ event_exclude = {
     "M ❤️",
     "Sleep"
 }
+
+task_tags = {
+    "Wake up + shower": ["+2", "Dad"]
+}

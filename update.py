@@ -309,16 +309,15 @@ i = 1 # Skipping first Sleep event
 
 if i == 1:
     i = i+1
-    continue
 else:
     print("{} not found in entry-list, adding".format(event_list))
 
     for event in event_list: # Skip ith event, avoid sleep from day before
-        if event[0] in task_project_pairs:
+        if event[0] in event_exclude:
+            print("{} is an excluded event, not adding".format(event[0]))
+        elif event[0] in task_project_pairs:
             add_entry(name=event[0], start_time=event[1], end_time=event[2],
                         project=task_project_pairs[event[0]], planned=False)
-        elif event[0] in event_exclude:
-            print("{} is an excluded event, not adding".format(event[0]))
         else:
             add_entry(name=event[0], start_time=event[1], end_time=event[2],
                         project=None, planned=False)

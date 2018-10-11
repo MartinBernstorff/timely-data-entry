@@ -58,10 +58,10 @@ for event in event_list: # Skip ith event, avoid sleep from day before
             if event[0] in task_tags:
                 add_entry(name=event[0], start_time=event[1], end_time=event[2],
                             tags=task_tags[event[0]])
-                no_project_txt.write(str(event[0]))
+                no_project_txt.write(str(event[0]) + "\n")
             else:
                 add_entry(name=event[0], start_time=event[1], end_time=event[2])
-                no_project_txt.write(str(event[0]))
+                no_project_txt.write(str(event[0]) + "\n")
 
 b.quit()
 no_project_txt.close()

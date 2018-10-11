@@ -26,14 +26,22 @@ task_project_pairs = {
     "Empty out inbox": "Empty out inbox",
     "Journal Club": "Psychiatry-clinic",
     "Middags-konf": "Psychiatry-clinic",
-    "MIW": "Uncategorized"
+    "MIW": "Uncategorized",
+    "Good-night routine": "Good-night routine",
+    "R&P: Data-entry": "Daily review",
+    "Empty inbox": "Empty out inbox",
+    "Anki #Medicin": "Pensum"
 }
 
 event_exclude = {
     "🌛",
     "Transport",
-    "M ❤️",
     "Sleep"
+}
+
+update_event_exclude = {
+    "M ❤️",
+    "JAWS 🦈🎥💦"
 }
 
 task_tags = {
@@ -48,7 +56,9 @@ task_tags = {
     "Træne": ["+3"],
     "Misc. routine": ["+2"],
     "Good-night routine": ["+2"],
-    "Anki #All": ["+3"]
+    "Anki #All": ["+3"],
+    "Købe ind": ["+2"],
+    "Anki #Medicine": ["+3"]
 }
 
 calendar_exclude = {

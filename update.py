@@ -8,7 +8,7 @@ import datetime
 from datetime import datetime as dt
 
 # Get task_dicts
-from task_dicts import task_project_pairs, event_exclude, task_tags
+from task_dicts import task_project_pairs, event_exclude, task_tags, update_event_exclude
 
 # Import helper functions
 from common import *
@@ -78,7 +78,7 @@ for event in event_list: # Skip ith event, avoid sleep from day before
         i = i+1
         continue
     else:
-        if event[0] in event_exclude:
+        if event[0] in event_exclude or event[0] in update_event_exclude:
             print("{} is an excluded event, not adding".format(event[0]))
         elif event[0] in task_project_pairs:
             print("{} not found in entry-list, adding".format(event_list))

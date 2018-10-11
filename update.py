@@ -18,6 +18,9 @@ from oauth2client import file, client, tools
 #Import credentials
 from credentials import email, password
 
+# Get task_dicts
+from task_dicts import task_project_pairs, event_exclude
+
 #Generate tomorrow-string
 index = dt.today() + datetime.timedelta(int(sys.argv[1])) #<--- Beware the time-delta!
 index_midnight = index.replace(hour=0, minute=1)
@@ -188,43 +191,6 @@ def add_entry(name, start_time, end_time, project, planned=True):
     send_return("button.Button__success___3mVd2")
     time.sleep(1)
 
-task_project_pairs = {
-    "Wake up + shower": "Morn",
-    "Meditate + breakfast": "Morn",
-    "Undervisermøde": "Epi",
-    "Morgen-konf.": "Psychiatry-clinic",
-    "Mid-day meditation": "Rest",
-    "Købe ind": "Food",
-    "Dinner": "Food",
-    "Lunch": "Food",
-    "Review & plan": "Daily review",
-    "Træne": "Workout",
-    "Weekly planning": "Weekly review",
-    "Day One: Weekly meditation": "Weekly review",
-    "Forberede mig til næste epi-undervisning": "Epi",
-    "Sleep": "Sleep",
-    "M ❤️'": "Mieke",
-    "Game 💪": "Mads",
-    "Afdelingsarbejde": "Psychiatry-clinic",
-    "Misc. routine": "Misc. routine",
-    "Pakke ud": "Miscel",
-    "Anki #All": "Pensum",
-    "Undervisning": "Psychiatry-clinic",
-    "Shave": "Mainten",
-    "Far og Martin – Snak": "Famil",
-    "Mor og Martin – Snak": "Famil",
-    "Empty out inbox": "Empty out inbox",
-    "Journal Club": "Psychiatry-clinic",
-    "Middags-konf": "Psychiatry-clinic"
-}
-
-event_exclude = {
-    "🌛",
-    "Transport",
-    "M ❤️"
-    "Sleep"
-}
-
 ########################
 # Baseline established #
 ########################
@@ -305,20 +271,21 @@ for entry in entries:
 ####################
 # Enter new events #
 ####################
-i = 1 # Skipping first Sleep event
+i = 1
 
-if i == 1:
-    i = i+1
-else:
-    print("{} not found in entry-list, adding".format(event_list))
-
-    for event in event_list: # Skip ith event, avoid sleep from day before
+for event in event_list: # Skip ith event, avoid sleep from day before
+    if i == 1:
+        i = i+1
+        continue
+    else:
         if event[0] in event_exclude:
             print("{} is an excluded event, not adding".format(event[0]))
         elif event[0] in task_project_pairs:
+            print("{} not found in entry-list, adding".format(event_list))
             add_entry(name=event[0], start_time=event[1], end_time=event[2],
                         project=task_project_pairs[event[0]], planned=False)
         else:
+            print("{} not found in entry-list, adding".format(event_list))
             add_entry(name=event[0], start_time=event[1], end_time=event[2],
                         project=None, planned=False)
 

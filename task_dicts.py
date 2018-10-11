@@ -25,7 +25,8 @@ task_project_pairs = {
     "Mor og Martin – Snak": "Famil",
     "Empty out inbox": "Empty out inbox",
     "Journal Club": "Psychiatry-clinic",
-    "Middags-konf": "Psychiatry-clinic"
+    "Middags-konf": "Psychiatry-clinic",
+    "MIW": "Uncategorized"
 }
 
 event_exclude = {
@@ -36,7 +37,18 @@ event_exclude = {
 }
 
 task_tags = {
-    "Wake up + shower": ["+2", "Dad"]
+    "Wake up + shower": ["+2"],
+    "Meditate + breakfast": ["+3"],
+    "Lunch": ["+2"],
+    "Empty inbox": ["+2"],
+    "Mid-day meditation": ["+3"],
+    "R&P: Data-entry": ["+2"],
+    "Review & plan": ["+3"],
+    "Dinner": ["+2"],
+    "Træne": ["+3"],
+    "Misc. routine": ["+2"],
+    "Good-night routine": ["+2"],
+    "Anki #All": ["+3"]
 }
 
 calendar_exclude = {

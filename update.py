@@ -52,7 +52,7 @@ for entry in entries:
             event_list.pop(event_list.index(event))
             break
         elif event[0] == title:
-            print("Match found for {}, adding".format(title))
+            print("Match found for {}, updating".format(title))
             update_entry(entry=entry, name=title, start_time=event[1],
                          end_time=event[2])
             event_list.pop(event_list.index(event))

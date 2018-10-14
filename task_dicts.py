@@ -7,7 +7,7 @@ task_project_pairs = {
     "Købe ind": "Food",
     "Dinner": "Food",
     "Lunch": "Food",
-    "Review & plan": "Daily review",
+    "Review yesterday #daily": "Daily review",
     "Træne": "Workout",
     "Weekly planning": "Weekly review",
     "Day One: Weekly meditation": "Weekly review",
@@ -28,9 +28,13 @@ task_project_pairs = {
     "Middags-konf": "Psychiatry-clinic",
     "MIW": "Uncategorized",
     "Good-night routine": "Good-night routine",
-    "R&P: Data-entry": "Daily review",
+    "R&P: Data-entry": "Daily data-entry",
     "Empty inbox": "Empty out inbox",
-    "Anki #Medicin": "Pensum"
+    "Anki #Medicin": "Pensum",
+    "Weekly plan: Scheduling": "Weekly review",
+    "Delete/define incubator project(s)": "Clarification",
+    "Snack": "Snacks",
+    "Game": "Mads"
 }
 
 event_exclude = {

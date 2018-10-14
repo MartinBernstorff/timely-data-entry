@@ -1,11 +1,14 @@
 import time
+import os
 from datetime import datetime as dt
 
+from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver import Firefox
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver import Chrome
 
 #Import credentials
 from credentials import email, password
@@ -15,9 +18,18 @@ from credentials import email, password
 ###########################
 def init(index_str):
     global b
-    b = Firefox()
+    options = Options()
+    options.add_argument("--headless") # Runs Chrome in headless mode.
+    options.add_argument('--no-sandbox') # # Bypass OS security model
+    options.add_argument('start-maximized')
+    options.add_argument('disable-infobars')
+    options.add_argument("--disable-extensions")
+
+    b = webdriver.Chrome(chrome_options=options)
     b.get('https://app.timelyapp.com/836406/calendar/day?date={}'.format(index_str))
 
+    print("Driver started")
+    print("Logging in")
     # Login
     elem = b.find_element_by_id("user_email")
     elem.send_keys(email)
@@ -25,6 +37,7 @@ def init(index_str):
     elem = b.find_element_by_id("user_password")
     elem.send_keys(password)
     elem.send_keys(Keys.RETURN)
+    print("Log-in succesful")
 
     # Wait for page loaded
     try:
@@ -66,7 +79,7 @@ def strip_and_datetime(time_string):
 
 def wait_for_element(selector):
     try:
-        element = WebDriverWait(b, 90).until(
+        element = WebDriverWait(b, 15).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, selector))
         )
     finally:
@@ -109,7 +122,9 @@ def update_entry(entry, name, start_time, end_time):
         print("{} to {}".format(start_time_fmt, end_time_fmt))
 
     # Submit
+    time.sleep(1)
     send_return("button.Button__success___3mVd2")
+    time.sleep(1)
 
 def add_entry(name, start_time, end_time, project=None, tags=None, planned=True):
     '''
@@ -134,7 +149,6 @@ def add_entry(name, start_time, end_time, project=None, tags=None, planned=True)
     ############
     # Starting #
     ############
-
     add_entry_selector = "EventAddButton__container___1rzOq"
 
     print("Adding {}".format(name))
@@ -186,4 +200,6 @@ def add_entry(name, start_time, end_time, project=None, tags=None, planned=True)
             send_return(".Input__container___32lm1")
 
     # Submit
+    time.sleep(1)
     send_return("button.Button__success___3mVd2")
+    time.sleep(1)

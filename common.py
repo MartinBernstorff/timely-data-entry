@@ -12,6 +12,7 @@ from selenium.webdriver import Chrome
 
 #Import credentials
 from credentials import email, password
+from emoji import UNICODE_EMOJI
 
 ###########################
 # Init browser and log in #
@@ -21,12 +22,14 @@ def init(index_str):
     options = Options()
     options.add_argument("--headless") # Runs Chrome in headless mode.
     options.add_argument('--no-sandbox') # # Bypass OS security model
-    options.add_argument('start-maximized')
+    options.add_argument('--start-maximized')
     options.add_argument('disable-infobars')
     options.add_argument("--disable-extensions")
 
     b = webdriver.Chrome(chrome_options=options)
     b.get('https://app.timelyapp.com/836406/calendar/day?date={}'.format(index_str))
+
+    b.maximize_window()
 
     print("Driver started")
     print("Logging in")
@@ -50,11 +53,15 @@ def init(index_str):
 ####################
 # Helper functions #
 ####################
-def fill_field(selector, value):
+def fill_field(selector, value, delay=0.1):
     wait_for_element(selector)
     el = b.find_element_by_css_selector(selector)
     el.clear()
+    time.sleep(delay)
+    el.clear()
+    print("     Entering '{}'".format(value))
     el.send_keys(value)
+    time.sleep(delay)
 
 def get_field_value(selector):
     wait_for_element(selector)
@@ -86,45 +93,60 @@ def wait_for_element(selector):
         pass
 
 def update_entry(entry, name, start_time, end_time):
-    start_time = strip_and_datetime(start_time)
-    end_time = strip_and_datetime(end_time)
-
-    # Convert to unix
-    start_time_ts = time.mktime(start_time.timetuple())
-    end_time_ts = time.mktime(end_time.timetuple())
-
-    # Calculate time in hours and minutes
-    hours = int(end_time_ts-start_time_ts) // 3600
-    minutes = int(end_time_ts-start_time_ts) // 60 % 60
-
-    # Create formatted start_time
-    start_time_fmt = start_time.strftime("%H:%M")
-
-    ############
-    # Starting #
-    ############
-
-    # Open element
-    print("Updating {}".format(name))
-    entry.click()
-
-    # Update time
-    start_time_fmt = start_time.strftime("%H:%M")
-    end_time_fmt = end_time.strftime("%H:%M")
-
-    if name == "Sleep":
-        fill_field("input[name='from']", start_time_fmt)
-        fill_field("input[name='hours']", hours)
-        fill_field("input[name='minutes']", minutes)
+    if contains_emoji(name) is True:
+        print("{} contains emoji, skipping".format(name))
     else:
-        fill_field("input[name='from']", start_time_fmt)
-        fill_field("input[name='to']", end_time_fmt)
-        print("{} to {}".format(start_time_fmt, end_time_fmt))
+        start_time = strip_and_datetime(start_time)
+        end_time = strip_and_datetime(end_time)
 
-    # Submit
-    time.sleep(1)
-    send_return("button.Button__success___3mVd2")
-    time.sleep(1)
+        # Convert to unix
+        start_time_ts = time.mktime(start_time.timetuple())
+        end_time_ts = time.mktime(end_time.timetuple())
+
+        # Calculate time in hours and minutes
+        hours = int(end_time_ts-start_time_ts) // 3600
+        minutes = int(end_time_ts-start_time_ts) // 60 % 60
+
+        # Create formatted start_time
+        start_time_fmt = start_time.strftime("%H:%M")
+
+        ############
+        # Starting #
+        ############
+
+        # Open element
+        print("Updating {}".format(name))
+
+        time.sleep(0.3)
+        entry.click()
+        print("    {} clicked".format(name))
+        time.sleep(0.3)
+
+        # Update time
+        start_time_fmt = start_time.strftime("%H:%M")
+        end_time_fmt = end_time.strftime("%H:%M")
+
+        print("  Updating start- and endtimes")
+        if name == "Sleep":
+            fill_field("input[name='from']", start_time_fmt)
+            fill_field("input[name='hours']", hours)
+            fill_field("input[name='minutes']", minutes)
+        else:
+            fill_field("input[name='from']", start_time_fmt, delay=0.5)
+            fill_field("input[name='to']", end_time_fmt, delay=0.5)
+            print("{} to {}".format(start_time_fmt, end_time_fmt))
+
+        # Submit
+        time.sleep(0.6)
+        send_return("button.Button__success___3mVd2")
+        print("Finished!")
+        time.sleep(0.6)
+
+def contains_emoji(s):
+    count = 0
+    for emoji in UNICODE_EMOJI:
+        count += s.count(emoji)
+    return bool(count)
 
 def add_entry(name, start_time, end_time, project=None, tags=None, planned=True):
     '''
@@ -135,71 +157,76 @@ def add_entry(name, start_time, end_time, project=None, tags=None, planned=True)
         Project: Entry project (str)
         Planned: Whether pre-planned (bool)
     '''
-    start_time = strip_and_datetime(start_time)
-    end_time = strip_and_datetime(end_time)
-
-    # Convert to unix
-    start_time_ts = time.mktime(start_time.timetuple())
-    end_time_ts = time.mktime(end_time.timetuple())
-
-    # Calculate time in hours and minutes
-    hours = int(end_time_ts-start_time_ts) // 3600
-    minutes = int(end_time_ts-start_time_ts) // 60 % 60
-
-    ############
-    # Starting #
-    ############
-    add_entry_selector = "EventAddButton__container___1rzOq"
-
-    print("Adding {}".format(name))
-    click_element(".{}".format(add_entry_selector))
-
-    # Set entry start- and end-time
-    click_element("span.fa-arrows-h")
-
-    start_time_fmt = start_time.strftime("%H:%M")
-    end_time_fmt = end_time.strftime("%H:%M")
-
-    fill_field("input[name='from']", start_time_fmt)
-    fill_field("input[name='to']", end_time_fmt)
-
-    if name == "Sleep":
-        fill_field("input[name='hours']", hours)
-        fill_field("input[name='minutes']", minutes)
-
-    fill_field("textarea#tag-input", name)
-
-    # Set planned time
-    if planned is not False:
-        click_element("div[data-hint='Set planned time']")
-
-        fill_field("input[name='estimated_hours']", hours)
-        fill_field("input[name='estimated_minutes']", minutes)
-
-    # Set project
-    if project is not None:
-        el = b.find_element_by_css_selector("div.Select-value-label")
-        el.click()
-        el = b.find_element_by_css_selector("input[role='combobox']")
-        el.send_keys(project)
-        el.send_keys(Keys.RETURN)
+    if contains_emoji(name) is True:
+        print("{} contains emoji, skipping".format(name))
     else:
-        el = b.find_element_by_css_selector("div.Select-value-label")
-        el.click()
-        el = b.find_element_by_css_selector("input[role='combobox']")
-        el.send_keys("Uncategorized")
-        el.send_keys(Keys.RETURN)
+        start_time = strip_and_datetime(start_time)
+        end_time = strip_and_datetime(end_time)
 
-    # Add tags
-    if tags is not None:
-        click_element(".TagDropdown__noTags___M2_Fp")
-        for tag in tags:
-            print("    Adding {} tag".format(tag))
-            fill_field(".Input__container___32lm1", tag)
-            fill_field(".Input__container___32lm1", tag) # Bug in Timely, re-fill
-            send_return(".Input__container___32lm1")
+        # Convert to unix
+        start_time_ts = time.mktime(start_time.timetuple())
+        end_time_ts = time.mktime(end_time.timetuple())
 
-    # Submit
-    time.sleep(1)
-    send_return("button.Button__success___3mVd2")
-    time.sleep(1)
+        # Calculate time in hours and minutes
+        hours = int(end_time_ts-start_time_ts) // 3600
+        minutes = int(end_time_ts-start_time_ts) // 60 % 60
+
+        ############
+        # Starting #
+        ############
+        add_entry_selector = "EventAddButton__container___1rzOq"
+
+        print("Adding {}".format(name))
+        click_element(".{}".format(add_entry_selector))
+        time.sleep(0.6)
+
+        # Set entry start- and end-time
+        click_element("span.fa-arrows-h")
+        time.sleep(0.3)
+
+        start_time_fmt = start_time.strftime("%H:%M")
+        end_time_fmt = end_time.strftime("%H:%M")
+
+        fill_field("input[name='from']", start_time_fmt, delay=0.5)
+        fill_field("input[name='to']", end_time_fmt, delay=0.5)
+
+        if name == "Sleep":
+            fill_field("input[name='hours']", hours)
+            fill_field("input[name='minutes']", minutes)
+
+        fill_field("textarea#tag-input", name)
+
+        # Set planned time
+        if planned is not False:
+            click_element("div[data-hint='Set planned time']")
+
+            fill_field("input[name='estimated_hours']", hours)
+            fill_field("input[name='estimated_minutes']", minutes)
+
+        # Set project
+        if project is not None:
+            el = b.find_element_by_css_selector("div.Select-value-label")
+            el.click()
+            el = b.find_element_by_css_selector("input[role='combobox']")
+            el.send_keys(project)
+            el.send_keys(Keys.RETURN)
+        else:
+            el = b.find_element_by_css_selector("div.Select-value-label")
+            el.click()
+            el = b.find_element_by_css_selector("input[role='combobox']")
+            el.send_keys("Uncategorized")
+            el.send_keys(Keys.RETURN)
+
+        # Add tags
+        if tags is not None:
+            click_element(".TagDropdown__noTags___M2_Fp")
+            for tag in tags:
+                print("    Adding {} tag".format(tag))
+                fill_field(".Input__container___32lm1", tag)
+                fill_field(".Input__container___32lm1", tag) # Bug in Timely, re-fill
+                send_return(".Input__container___32lm1")
+
+        # Submit
+        time.sleep(0.3)
+        send_return("button.Button__success___3mVd2")
+        time.sleep(0.3)

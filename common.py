@@ -127,19 +127,14 @@ def update_entry(entry, name, start_time, end_time):
         end_time_fmt = end_time.strftime("%H:%M")
 
         print("  Updating start- and endtimes")
-        if name == "Sleep":
-            fill_field("input[name='from']", start_time_fmt)
-            fill_field("input[name='hours']", hours)
-            fill_field("input[name='minutes']", minutes)
-        else:
-            fill_field("input[name='from']", start_time_fmt, delay=0.5)
-            fill_field("input[name='to']", end_time_fmt, delay=0.5)
+        fill_field("input[name='from']", start_time_fmt, delay=0.8)
+        fill_field("input[name='to']", end_time_fmt, delay=0.8)
 
         # Submit
-        time.sleep(0.6)
+        time.sleep(0.8)
         send_return("button.Button__success___3mVd2")
         print("{} processed".format(name))
-        time.sleep(0.6)
+        time.sleep(0.8)
 
 def contains_emoji(s):
     count = 0
@@ -186,8 +181,8 @@ def add_entry(name, start_time, end_time, project=None, tags=None, planned=True)
         start_time_fmt = start_time.strftime("%H:%M")
         end_time_fmt = end_time.strftime("%H:%M")
 
-        fill_field("input[name='from']", start_time_fmt, delay=0.5)
-        fill_field("input[name='to']", end_time_fmt, delay=0.5)
+        fill_field("input[name='from']", start_time_fmt, delay=0.8)
+        fill_field("input[name='to']", end_time_fmt, delay=0.8)
 
         if name == "Sleep":
             fill_field("input[name='hours']", hours)
@@ -199,8 +194,8 @@ def add_entry(name, start_time, end_time, project=None, tags=None, planned=True)
         if planned is not False:
             click_element("div[data-hint='Set planned time']")
 
-            fill_field("input[name='estimated_hours']", hours)
-            fill_field("input[name='estimated_minutes']", minutes)
+            fill_field("input[name='estimated_hours']", hours, delay=0.3)
+            fill_field("input[name='estimated_minutes']", minutes, delay=0.3)
 
         # Set project
         if project is not None:
@@ -226,6 +221,6 @@ def add_entry(name, start_time, end_time, project=None, tags=None, planned=True)
                 send_return(".Input__container___32lm1")
 
         # Submit
-        time.sleep(0.3)
+        time.sleep(0.5)
         send_return("button.Button__success___3mVd2")
-        time.sleep(0.3)
+        time.sleep(0.5)

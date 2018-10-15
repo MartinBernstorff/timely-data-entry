@@ -30,6 +30,7 @@ from common import b
 # Setup gcal
 gcal.init(index_formatted, day_after_index_formatted)
 from gcal import event_list
+print(event_list)
 
 ###############
 # Add entries #
@@ -40,28 +41,24 @@ i = 1
 no_project_txt = open("no_project/{}.txt".format(index_str), "w")
 
 for event in event_list: # Skip ith event, avoid sleep from day before
-    if i == 1:
-        i = i+1
-        continue
-    else:
-        if event[0] in event_exclude:
-            print("{} is an excluded event, not adding".format(event[0]))
-        elif event[0] in task_project_pairs:
-            if event[0] in task_tags:
-                add_entry(name=event[0], start_time=event[1], end_time=event[2],
-                            project=task_project_pairs[event[0]],
-                            tags=task_tags[event[0]])
-            else:
-                add_entry(name=event[0], start_time=event[1], end_time=event[2],
-                            project=task_project_pairs[event[0]])
+    if event[0] in event_exclude:
+        print("{} is an excluded event, not adding".format(event[0]))
+    elif event[0] in task_project_pairs:
+        if event[0] in task_tags:
+            add_entry(name=event[0], start_time=event[1], end_time=event[2],
+                        project=task_project_pairs[event[0]],
+                        tags=task_tags[event[0]])
         else:
-            if event[0] in task_tags:
-                add_entry(name=event[0], start_time=event[1], end_time=event[2],
-                            tags=task_tags[event[0]])
-                no_project_txt.write(str(event[0]) + "\n")
-            else:
-                add_entry(name=event[0], start_time=event[1], end_time=event[2])
-                no_project_txt.write(str(event[0]) + "\n")
+            add_entry(name=event[0], start_time=event[1], end_time=event[2],
+                        project=task_project_pairs[event[0]])
+    else:
+        if event[0] in task_tags:
+            add_entry(name=event[0], start_time=event[1], end_time=event[2],
+                        tags=task_tags[event[0]])
+            no_project_txt.write(str(event[0]) + "\n")
+        else:
+            add_entry(name=event[0], start_time=event[1], end_time=event[2])
+            no_project_txt.write(str(event[0]) + "\n")
 
 b.quit()
 no_project_txt.close()

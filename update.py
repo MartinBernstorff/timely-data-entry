@@ -46,6 +46,7 @@ for entry in entries:
     matched = 0 #Whether the entry has matched an event
 
     for event in event_list:
+        print("Events left: {}".format(len(event_list)))
         if event[0] in event_exclude:
             print("{} excluded".format(event[0]))
             matched = 1
@@ -63,32 +64,29 @@ for entry in entries:
 
     if matched == 0:
         print("{} not in event_list, setting time = 0".format(title))
-        update_entry(entry=entry, name=title, start_time=event[1],
-                 end_time=event[1])
+        date_void = "2018-10-14T12:00:00+02:00"
+        date_void2 = "2018-10-14T12:00:00+02:00"
+        update_entry(entry=entry, name=title, start_time=date_void,
+                 end_time=date_void2)
+
 
 ####################
 # Enter new events #
 ####################
-i = 1
-
 no_project_txt = open("no_project/{}.txt".format(index_str), "w")
 
 for event in event_list: # Skip ith event, avoid sleep from day before
-    if i == 1:
-        i = i+1
-        continue
+    if event[0] in event_exclude or event[0] in update_event_exclude:
+        print("{} is an excluded event, not adding".format(event[0]))
+    elif event[0] in task_project_pairs:
+        print("{} not found in entry-list, adding".format(event_list))
+        add_entry(name=event[0], start_time=event[1], end_time=event[2],
+                    project=task_project_pairs[event[0]], planned=False)
     else:
-        if event[0] in event_exclude or event[0] in update_event_exclude:
-            print("{} is an excluded event, not adding".format(event[0]))
-        elif event[0] in task_project_pairs:
-            print("{} not found in entry-list, adding".format(event_list))
-            add_entry(name=event[0], start_time=event[1], end_time=event[2],
-                        project=task_project_pairs[event[0]], planned=False)
-        else:
-            print("{} not found in entry-list, adding".format(event_list))
-            add_entry(name=event[0], start_time=event[1], end_time=event[2],
-                        project=None, planned=False)
-            no_project_txt.write(str(event[0]) + "\n")
+        print("{} not found in entry-list, adding".format(event_list))
+        add_entry(name=event[0], start_time=event[1], end_time=event[2],
+                    project=None, planned=False)
+        no_project_txt.write(str(event[0]) + "\n")
 
 b.quit()
 no_project_txt.close()

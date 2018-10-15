@@ -119,7 +119,7 @@ def update_entry(entry, name, start_time, end_time):
 
         time.sleep(0.3)
         entry.click()
-        print("    {} clicked".format(name))
+        print("  Clicking {}".format(name))
         time.sleep(0.3)
 
         # Update time

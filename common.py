@@ -134,7 +134,6 @@ def update_entry(entry, name, start_time, end_time):
         else:
             fill_field("input[name='from']", start_time_fmt, delay=0.5)
             fill_field("input[name='to']", end_time_fmt, delay=0.5)
-            print("{} to {}".format(start_time_fmt, end_time_fmt))
 
         # Submit
         time.sleep(0.6)

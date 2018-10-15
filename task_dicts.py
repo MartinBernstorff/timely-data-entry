@@ -34,7 +34,9 @@ task_project_pairs = {
     "Weekly plan: Scheduling": "Weekly review",
     "Delete/define incubator project(s)": "Clarification",
     "Snack": "Snacks",
-    "Game": "Mads"
+    "Game": "Mads",
+    "Nap": "Restoration",
+    "Anki": "Pensum"
 }
 
 event_exclude = {
@@ -62,7 +64,8 @@ task_tags = {
     "Good-night routine": ["+2"],
     "Anki #All": ["+3"],
     "Købe ind": ["+2"],
-    "Anki #Medicine": ["+3"]
+    "Anki #Medicine": ["+3"],
+    "Anki": ["+3"]
 }
 
 calendar_exclude = {

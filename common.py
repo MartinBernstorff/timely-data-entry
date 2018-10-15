@@ -134,12 +134,11 @@ def update_entry(entry, name, start_time, end_time):
         else:
             fill_field("input[name='from']", start_time_fmt, delay=0.5)
             fill_field("input[name='to']", end_time_fmt, delay=0.5)
-            print("{} to {}".format(start_time_fmt, end_time_fmt))
 
         # Submit
         time.sleep(0.6)
         send_return("button.Button__success___3mVd2")
-        print("Finished!")
+        print("{} processed".format(name))
         time.sleep(0.6)
 
 def contains_emoji(s):

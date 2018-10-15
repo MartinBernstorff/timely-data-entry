@@ -44,9 +44,9 @@ for entry in entries:
     title_css = "div.Event__eventContent___2P8C3 div.Event__contentClipper___2mL46 span.Event__header___13d1z span span"
     title = entry.find_element_by_css_selector(title_css).text
     matched = 0 #Whether the entry has matched an event
+    print("Events left: {}".format(len(event_list)))
 
     for event in event_list:
-        print("Events left: {}".format(len(event_list)))
         if event[0] in event_exclude:
             print("{} excluded".format(event[0]))
             matched = 1

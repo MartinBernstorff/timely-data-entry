@@ -194,8 +194,8 @@ def add_entry(name, start_time, end_time, project=None, tags=None, planned=True)
         if planned is not False:
             click_element("div[data-hint='Set planned time']")
 
-            fill_field("input[name='estimated_hours']", hours, delay=0.3)
-            fill_field("input[name='estimated_minutes']", minutes, delay=0.3)
+            fill_field("input[name='estimated_hours']", hours, delay=0.5)
+            fill_field("input[name='estimated_minutes']", minutes, delay=0.5)
 
         # Set project
         if project is not None:

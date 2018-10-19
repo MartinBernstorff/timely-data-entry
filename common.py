@@ -190,12 +190,14 @@ def add_entry(name, start_time, end_time, project=None, tags=None, planned=True)
 
         fill_field("textarea#tag-input", name)
 
+        time.sleep(0.3)
+
         # Set planned time
         if planned is not False:
             click_element("div[data-hint='Set planned time']")
 
-            fill_field("input[name='estimated_hours']", hours, delay=0.5)
-            fill_field("input[name='estimated_minutes']", minutes, delay=0.5)
+            fill_field("input[name='estimated_hours']", hours, delay=0.3)
+            fill_field("input[name='estimated_minutes']", minutes, delay=0.3)
 
         # Set project
         if project is not None:

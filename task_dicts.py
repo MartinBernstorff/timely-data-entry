@@ -36,7 +36,9 @@ task_project_pairs = {
     "Snack": "Snacks",
     "Game": "Mads",
     "Nap": "Restoration",
-    "Anki": "Pensum"
+    "Anki": "Pensum",
+    "Breakfast": "Morning",
+    "Meditate": "Morning"
 }
 
 event_exclude = {
